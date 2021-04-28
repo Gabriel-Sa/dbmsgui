@@ -1,3 +1,50 @@
+/*
+colors:
+mist: #90AFC5
+stone: #336B87
+shadow: #2A3132
+Autumn foliage: #763626
+ */
 h1{
   text-align: center;
+  padding-top: 5%;
+  color: white;
+}
+/* .searchbar{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+} */
+
+.buttons{
+  background-color: #763626;
+  color: white;
+  border-style: hidden;
+  transition-duration: 0.1s;
+  text-align: center;
+  font-size: 20px;
+  width:250px;
+  height: 150px;
+}
+
+.buttonHolder{
+  padding-top: 5%;
+  display: grid;
+  justify-content: center;
+  width: 700px;
+  margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, 250px);
+  grid-gap: 10px;
+}
+
+.buttons:hover{
+  background-color: #2A3132;
+}
+
+html, body{
+  background: rgb(144,175,197);
+  font-family: verdana;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(101,143,168,1) 12%,
+  rgba(81,124,150,1) 39%, rgba(77,114,135,1) 54%, rgba(71,112,134,1) 74%);
 }
