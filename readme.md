@@ -4,4 +4,5 @@ the specific steps are:
 1. Install pg using npm
 2. Install express using npm
 3. Go into app.js and edit the database settings to match your username and password, everthing else
-does not need to be changed. 
+does not need to be changed.
+run with npm app.js
