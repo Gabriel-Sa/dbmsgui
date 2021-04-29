@@ -7,13 +7,14 @@
     <title>Project GUI</title>
   </head>
   <body>
+    <script src="index.js"></script>
     <h1> Rent-A-Car!</h1>
     <!-- <textarea class="searchbar"></textarea> -->
     <div class="buttonHolder">
-      <button class="buttons" id="addCustomerButton">Add Customer</button>
-      <button class="buttons" id="addVehicleButton">Add Vehicle</button>
-      <button class="buttons" id="addReservationButton">New Reservation</button>
-      <button class="buttons" id ="returnVehicleButton">Return Vehicle</button>
+      <button class="buttons" id="addCustomerButton" onclick = "AddCustomer()">Add Customer</button>
+      <button class="buttons" id="addVehicleButton" onclick = "AddVehicle()">Add Vehicle</button>
+      <button class="buttons" id="addReservationButton" onclick = "AddReservation()">New Reservation</button>
+      <button class="buttons" id ="returnVehicleButton" onclick = "ReturnVehicle()">Return Vehicle</button>
     </div>
   </body>
 </html>
