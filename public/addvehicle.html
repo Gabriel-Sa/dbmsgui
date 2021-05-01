@@ -4,15 +4,36 @@
     <meta charset="utf-8">
     <link href="styles.css" rel="stylesheet" type="text/css">
     <script type="module"></script>
-    <title>Project GUI</title>
+    <title>Add Vehicle</title>
   </head>
   <body>
-    <script src="addvehicle.js"></script>
-    <h1> Rent-A-Car!</h1>
-    <!-- <textarea class="searchbar"></textarea> -->
-    <div class="buttonHolder">
-        <button class="buttons" id="homepage" onclick = "Homepage()">Back</button>
+    <script src="index.js"></script>
+    <h1> Add Vehicle </h1>
+    <form action="/addVehicle" method="POST">
+      <lable for="vehicleid">Vehicle ID:</lable>
+      <input type="text" class="userInput" id="vehicleId" name="vehicleId"><br><br>
+      <lable for="description">Desciption:</lable>
+      <input type="text" class="userInput" id="description" name="description"><br><br>
+      <lable for="year">Year:</lable>
+      <input type="text" class="userInput" id="year" name="year"><br><br>
+      <lable for="type">Type:</lable>
+      <select id="type" name="type">
+          <option value="1">Compact</option>
+          <option value="2">Medium</option>
+          <option value="3">Large</option>
+          <option value="4">SUV</option>
+          <option value="5">Truck</option>
+          <option value="6">Van</option>
+      </select>
+      <lable for="category">Category:</lable>
+      <select id="category" name="category">
+          <option value="0">Basic</option>
+          <option value="1">Luxury</option>
+      </select>
+      <button type="submit" class="submitButtons" id="submitVehicle">Submit</button>
+    </form>
+    <div class="customerBackHolder">
+      <button class="buttons" id="customerBack" onclick = "Homepage()">Back</button>
     </div>
-
   </body>
 </html>

@@ -48,23 +48,42 @@ input{
   box-shadow: none !important;
 }
 
+#submitVehicle{
+  background-color: #90AFC5;
+  color: white;
+  border-style: hidden;
+  transition-duration: 0.1s;
+  text-align: center;
+  font-size: 20px;
+  width: 100px;
+  height: 60px;
+  border-radius: 50px;
+  box-shadow: none !important;
+}
 
 .customerBackHolder{
   position: sticky;
   padding-top: 15%;
 }
 
+select{
+  width: 27%;
+}
+
 .buttonHolder{
   padding-top: 5%;
   display: grid;
   justify-content: center;
-  width: 700px;
+  width:800px;
   margin: 0 auto;
   grid-template-columns: repeat(auto-fit, 250px);
   grid-gap: 10px;
 }
 
 .buttons:hover{
+  background-color: #2A3132;
+}
+#submitVehicle:hover{
   background-color: #2A3132;
 }
 

@@ -66,6 +66,32 @@ app.post("/addcustomer", (req, res) => {
   res.redirect("/addCustomer.html");
 });
 
+app.post("/addVehicle", (req, res) => {
+  var queryInput = new Array();
+  queryInput[0] = req.body.vehicleId;
+  queryInput[1] = req.body.description;
+  queryInput[2] = req.body.year;
+  queryInput[3] = req.body.type;
+  queryInput[4] = req.body.category;
+  console.log(queryInput);
+  const query =
+    `INSERT INTO vehicle
+    VALUES('${queryInput[0]}',
+         '${queryInput[1]}',
+          ${queryInput[2]},
+          ${queryInput[3]},
+          ${queryInput[4]});`;
+  client.query(query, (err, res) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(res);
+    client.end();
+  });
+  res.redirect("/addVehicle.html")
+});
+
 app.listen(port, () => {
   console.log(`App started listening at http://localhost:${port}`);
 });
