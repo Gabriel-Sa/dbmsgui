@@ -8,11 +8,16 @@
   </head>
   <body>
     <script src="addcustomer.js"></script>
-    <h1> Rent-A-Car!</h1>
-    <!-- <textarea class="searchbar"></textarea> -->
-    <div class="buttonHolder">
-      <button class="buttons" id="homepage" onclick = "Homepage()">Back</button>
+    <h1> Add customer </h1>
+    <form action="/addCustomer" method="POST">
+      <lable for="custName">Customer Name:</lable>
+      <input type="text" class="userInput" id="custName" name="custName"><br><br>
+      <lable for="custPhone">Customer Phone Number:</lable>
+      <input type="text" class="userInput" id="custPhone" name="custPhone"><br><br>
+      <button type="submit" id="submitUser">Submit</button>
+    </form>
+    <div class="customerBackHolder">
+      <button class="buttons" id="customerBack" onclick = "Homepage()">Back</button>
     </div>
-
   </body>
 </html>

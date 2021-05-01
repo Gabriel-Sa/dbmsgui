@@ -1,4 +1,3 @@
-function Homepage()
-{
-    window.location.replace("index.html");
+function Homepage() {
+  window.location.replace("index.html");
 }

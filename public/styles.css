@@ -10,11 +10,18 @@ h1{
   padding-top: 5%;
   color: white;
 }
-/* .searchbar{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-} */
+
+form{
+  padding-left: 25%;
+  width: 50%;
+
+}
+input{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
 
 .buttons{
   background-color: #763626;
@@ -25,6 +32,24 @@ h1{
   font-size: 20px;
   width:250px;
   height: 150px;
+}
+
+#customerBack, #submitUser{
+  background-color: #763626;
+  color: white;
+  border-style: hidden;
+  transition-duration: 0.1s;
+  text-align: center;
+  font-size: 20px;
+  width: 100px;
+  height: 60px;
+  border-radius: 50px;
+}
+
+
+.customerBackHolder{
+  position: sticky;
+  padding-top: 15%;
 }
 
 .buttonHolder{

@@ -5,4 +5,4 @@ the specific steps are:
 2. Install express using npm
 3. Go into app.js and edit the database settings to match your username and password, everthing else
 does not need to be changed.
-Run using npm app.js in terminal.
+Run using node app.js in terminal.
