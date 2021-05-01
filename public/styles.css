@@ -8,7 +8,7 @@ Autumn foliage: #763626
 h1{
   text-align: center;
   padding-top: 5%;
-  color: white;
+  color: #2A3132;
 }
 
 form{
@@ -24,7 +24,7 @@ input{
 }
 
 .buttons{
-  background-color: #763626;
+  background-color: #90AFC5;
   color: white;
   border-style: hidden;
   transition-duration: 0.1s;
@@ -32,10 +32,11 @@ input{
   font-size: 20px;
   width:250px;
   height: 150px;
+  box-shadow: -.5rem 0 .5rem #112;
 }
 
 #customerBack, #submitUser{
-  background-color: #763626;
+  background-color: #90AFC5;
   color: white;
   border-style: hidden;
   transition-duration: 0.1s;
@@ -44,6 +45,7 @@ input{
   width: 100px;
   height: 60px;
   border-radius: 50px;
+  box-shadow: none !important;
 }
 
 
@@ -67,9 +69,7 @@ input{
 }
 
 html, body{
-  background: rgb(144,175,197);
+  background: rgb(235,240,245);
   font-family: verdana;
   height: 100%;
-  background: linear-gradient(0deg, rgba(101,143,168,1) 12%,
-  rgba(81,124,150,1) 39%, rgba(77,114,135,1) 54%, rgba(71,112,134,1) 74%);
 }

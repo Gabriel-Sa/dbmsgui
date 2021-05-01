@@ -8,7 +8,7 @@ const { Client } = require('pg');
 const client = new Client({
   user: 'root', // Change username here
   host: 'localhost',
-  database: 'test',
+  database: 'project',
   password: 'root1234', //change password here
   port: 5432
 });
@@ -28,7 +28,7 @@ function completeUserInput(query) {
 //     age int
 // );`;
 //
-// //Start express server
+// //Start database server
 // client.query(query, (err, res) => {
 //   if (err) {
 //     console.error(err);
@@ -52,6 +52,17 @@ app.post("/addcustomer", (req, res) => {
   queryInput[0] = req.body.custName;
   queryInput[1] = req.body.custPhone;
   console.log(queryInput);
+  console.log(queryInput[1]);
+  const query = `INSERT INTO customer(name, phone) values
+   ('${queryInput[0]}', '${queryInput[1]}');`
+  client.query(query, (err, res) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(res.rows);
+    client.end();
+  });
   res.redirect("/addCustomer.html");
 });
 
