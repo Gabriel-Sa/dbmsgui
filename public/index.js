@@ -10,8 +10,11 @@ function AddReservation() {
 function ReturnVehicle() {
   window.location.replace("returnvehicle.html");
 }
-function searchReservation() {
-  window.location.replace("searchreservation.html");
+function searchCustomer() {
+  window.location.replace("searchcustomer.html");
+}
+function searchVehicle() {
+  window.location.replace("searchvehicles.html");
 }
 function Homepage() {
   window.location.replace("index.html");

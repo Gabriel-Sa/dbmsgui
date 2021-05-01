@@ -32,7 +32,7 @@ input{
   font-size: 20px;
   width:250px;
   height: 150px;
-  box-shadow: -.5rem 0 .5rem #112;
+  box-shadow: -.2rem 0 .4rem #112;
 }
 
 #customerBack, #submitUser{
@@ -62,8 +62,8 @@ input{
 }
 
 .customerBackHolder{
-  position: sticky;
-  padding-top: 15%;
+  position: fixed;
+  padding-top: 5%;
 }
 
 select{

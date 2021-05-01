@@ -47,12 +47,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const eRouter = express.Router();
 app.use("/", eRouter);
 
-app.post("/addcustomer", (req, res) => {
+app.post("/addCustomer", (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.custName;
   queryInput[1] = req.body.custPhone;
   console.log(queryInput);
-  console.log(queryInput[1]);
   const query = `INSERT INTO customer(name, phone) values
    ('${queryInput[0]}', '${queryInput[1]}');`
   client.query(query, (err, res) => {
@@ -60,7 +59,7 @@ app.post("/addcustomer", (req, res) => {
       console.error(err);
       return;
     }
-    console.log(res.rows);
+    console.log(res);
     client.end();
   });
   res.redirect("/addCustomer.html");
