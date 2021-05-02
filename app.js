@@ -15,29 +15,6 @@ const client = new Client({
 
 client.connect();
 
-function completeUserInput(query) {
-  const inputQuery = query;
-  // Implement adding of the customer data to the user database based off input.
-  return inputQuery;
-}
-// const query =
-//   `CREATE TABLE users (
-//     email varchar,
-//     firstName varchar,
-//     lastName varchar,
-//     age int
-// );`;
-//
-// //Start database server
-// client.query(query, (err, res) => {
-//   if (err) {
-//     console.error(err);
-//     return;
-//   }
-//   console.log('CREATE TABLE');
-//   client.end();
-// });
-
 const app = express();
 const port = 8000;
 
