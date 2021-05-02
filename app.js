@@ -1,15 +1,15 @@
 const express = require('express');
-const bodyParser = require("body-parser");
+const bodyparser = require("body-parser");
 const path = require('path');
 const { Client } = require('pg');
 
 //start connection with postgresql
 
 const client = new Client({
-  user: 'root', // Change username here
+  user: 'postgres', // Change username here
   host: 'localhost',
-  database: 'project',
-  password: 'root1234', //change password here
+  database: 'Car_Rental',
+  password: 'test1234', //change password here
   port: 5432
 });
 
@@ -42,7 +42,8 @@ const app = express();
 const port = 8000;
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyparser.urlencoded({ extended: false }));
+//app.use(express.urlencoded());
 
 const eRouter = express.Router();
 app.use("/", eRouter);
@@ -62,7 +63,7 @@ app.post("/addCustomer", (req, res) => {
     console.log(res);
     client.end();
   });
-  res.redirect("/addCustomer.html");
+  res.redirect('/');
 });
 
 app.post("/addVehicle", (req, res) => {
@@ -88,8 +89,31 @@ app.post("/addVehicle", (req, res) => {
     console.log(res);
     client.end();
   });
-  res.redirect("/addVehicle.html")
+  res.redirect('addVehicle.html');
 });
+
+app.post("/addReservation", (req, res) => {
+  var queryInput = new Array();
+  queryInput[0] = req.body.type;
+  queryInput[1] = req.body.category;
+  console.log(queryInput);
+  const query =
+  `SELECT V.VehicleID as VIN, V.Description, V.Year 
+   FROM vehicle AS V LEFT JOIN rental AS R ON R.VehicleID = V.VehicleID 
+   WHERE V.Category = '${queryInput[1]}' AND V.Type = '${queryInput[0]}' AND R.VehicleID IS NULL;`;
+  client.query(query, (err, res) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log("Output,", res.rows);
+    console.log("RowCount:", res.rowCount);
+    //client.end();
+  });
+  res.redirect('availableVehicles.html');
+  //res.render('tempdisplay', {data: res.rows});
+});
+
 
 app.listen(port, () => {
   console.log(`App started listening at http://localhost:${port}`);
