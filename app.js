@@ -6,10 +6,10 @@ const { Client } = require('pg');
 //start connection with postgresql
 
 const client = new Client({
-  user: 'postgres', // Change username here
+  user: 'root', // Change username here
   host: 'localhost',
-  database: 'Car_Rental',
-  password: 'test1234', //change password here
+  database: 'project',
+  password: 'root1234', //change password here
   port: 5432
 });
 
@@ -78,8 +78,8 @@ app.post("/returnVehicle", (req, res) => {
 
   console.log(queryInput);
   const query =
-    `SELECT * FROM vehicle AS V JOIN rental AS R ON R.VehicleID = V.VehicleID 
-   WHERE V.Category = '${queryInput[2]};`;
+    `SELECT * FROM vehicle AS V JOIN rental AS R ON R.VehicleID = V.VehicleID
+   WHERE V.Category = '${queryInput[2]}';`;
   client.query(query, (err, res) => {
     if (err) {
       console.error(err);
@@ -98,8 +98,8 @@ app.post("/addReservation", (req, res) => {
   queryInput[1] = req.body.category;
   console.log(queryInput);
   const query =
-  `SELECT V.VehicleID as VIN, V.Description, V.Year 
-   FROM vehicle AS V LEFT JOIN rental AS R ON R.VehicleID = V.VehicleID 
+    `SELECT V.VehicleID as VIN, V.Description, V.Year
+   FROM vehicle AS V LEFT JOIN rental AS R ON R.VehicleID = V.VehicleID
    WHERE V.Category = '${queryInput[1]}' AND V.Type = '${queryInput[0]}' AND R.VehicleID IS NULL;`;
   client.query(query, (err, res) => {
     if (err) {
