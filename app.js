@@ -3,18 +3,14 @@ const bodyparser = require("body-parser");
 const path = require('path');
 const { Client } = require('pg');
 const { Router } = require('express');
-const { Pool } = require('pg');
-const jsdom = require("jsdom");
-const {JSDOM} = jsdom;
 
-global.document = new JSDOM("availableVehicles.html").window.document;
 //start connection with postgresql
 
 const client = new Client({
-  user: 'postgres', // Change username here
+  user: 'root', // Change username here
   host: 'localhost',
-  database: 'Car_Rental',
-  password: 'test', //change password here
+  database: 'project',
+  password: 'root1234', //change password here
   port: 5432
 });
 
@@ -48,7 +44,7 @@ const port = 8000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyparser.urlencoded({ extended: false }));
-//app.use(express.urlencoded());
+
 
 const eRouter = express.Router();
 app.use("/", eRouter);
@@ -97,39 +93,42 @@ app.post("/addVehicle", (req, res) => {
   res.redirect('addVehicle.html');
 });
 
-
-app.post("/addReservation", (req, res) => {
+var addRentalData = {
+  headers: [],
+  data: []
+};
+app.post("/addReservation", async (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.type;
   queryInput[1] = req.body.category;
   console.log(queryInput);
   const query =
-  `SELECT V.VehicleID as VIN, V.Description, V.Year 
-   FROM vehicle AS V LEFT JOIN rental AS R ON R.VehicleID = V.VehicleID 
+    `SELECT V.VehicleID as VIN, V.Description, V.Year
+   FROM vehicle AS V LEFT JOIN rental AS R ON R.VehicleID = V.VehicleID
    WHERE V.Category = '${queryInput[1]}' AND V.Type = '${queryInput[0]}' AND R.VehicleID IS NULL;`;
-  pool.query(query, (err, res) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-
-    //console.log("Output,", res.rows);
-    //console.log("RowCount:", res.rowCount);
-    //client.end();
-  });
+  const data = await client.query(query);
+  for (var i = 0; i < 3; i++) {
+    addRentalData.headers[i] = data.fields[i].name;
+  }
+  addRentalData.data = data.rows;
+  console.log(addRentalData);
   //document.getElementByID('printVehicle').innerHTML = "testing";
-  res.redirect('availableVehicles.html');
-  let table = document.getElementById("availableVehicle");
-  //document.write("test");
-  let data = Object.keys("vin", "description", "year");
-  console.log(table);
-  generateTableHead(table, data);
-
-  console.log(table);
-  console.log(data);
+  // let table = document.getElementById("availableVehicle");
+  // //document.write("test");
+  // let data = Object.keys("vin", "description", "year");
+  // console.log(table);
+  // generateTableHead(table, data);
+  //
+  // console.log(table);
+  // console.log(data);
+  res.redirect('/availableVehicles.html');
 });
 
-function generateTableHead(table, data) {
+app.get("/getRentalData", (req, res) => {
+  res.send(addRentalData);
+});
+
+async function generateTableHead(table, data) {
   let thead = table.createTHead();
   let row = thead.insertRow();
   for (let key of data) {

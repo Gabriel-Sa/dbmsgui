@@ -92,3 +92,24 @@ html, body{
   font-family: verdana;
   height: 100%;
 }
+
+.table-refresh{
+  min-width: 400px;
+  max-width: 1000px;
+  font-size: 14px;
+}
+
+.table-refresh__table{
+  border-collapse: collapse;
+  width:100%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.table-refresh__table thead tr{
+  background: #336B87;
+  color: white;
+}
+.table-refresh__table th,
+.table-refresh__table td{
+  text-align: left;
+  padding: 9px 18px;
+}
