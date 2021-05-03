@@ -9,9 +9,13 @@
   <body>
     <script src="index.js"></script>
     <h1> Search Vehicles</h1>
-    <!-- <textarea class="searchbar"></textarea> -->
-    <div class="buttonHolder">
-        <button class="buttons" id="homepage" onclick = "Homepage()">Back</button>
+    <form action="/searchVehicles" method="POST">
+      <lable for="searchVehicles">Search:</lable>
+      <input type="text" class="userInput" id="searchVehicles" name="searchVehicles"><br><br>
+      <button type="submit" id="submitUser">Submit</button>
+    </form>
+    <div class="customerBackHolder">
+        <button class="buttons" id="customerBack" onclick = "Homepage()">Back</button>
     </div>
 
   </body>
