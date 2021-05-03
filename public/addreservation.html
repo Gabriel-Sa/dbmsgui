@@ -4,14 +4,30 @@
     <meta charset="utf-8">
     <link href="styles.css" rel="stylesheet" type="text/css">
     <script type="module"></script>
-    <title>Add Reservation</title>
+    <title>Project GUI</title>
   </head>
   <body>
-    <script src="index.js"></script>
-    <h1>Add Reservation</h1>
-    <!-- <textarea class="searchbar"></textarea> -->
-    <div class="buttonHolder">
-        <button class="buttons" id="homepage" onclick = "Homepage()">Back</button>
+    <script src="addreservation.js"></script>
+    <h1> Add Reservation </h1>
+    <form action="/addReservation" method="POST">
+      <lable for="type">Type:</lable>
+      <select id="type" name="type">
+          <option value="1">Compact</option>
+          <option value="2">Medium</option>
+          <option value="3">Large</option>
+          <option value="4">SUV</option>
+          <option value="5">Truck</option>
+          <option value="6">Van</option>
+      </select>
+      <lable for="category">Category:</lable>
+      <select id="category" name="category">
+          <option value="0">Basic</option>
+          <option value="1">Luxury</option>
+      </select>
+      <button type="submit" id="submitUser">Submit</button>
+    </form>
+    <div class="reservationBackHolder">
+      <button class="buttons" id="reservationBack" onclick = "Homepage()">Back</button>
     </div>
   </body>
 </html>
