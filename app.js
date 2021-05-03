@@ -69,6 +69,29 @@ app.post("/addVehicle", (req, res) => {
   res.redirect('addVehicle.html');
 });
 
+app.post("/returnVehicle", (req, res) => {
+  var queryInput = new Array();
+  queryInput[0] = req.body.custID;
+  queryInput[1] = req.body.vehicleID;
+  queryInput[2] = req.body.vehicleDesc;
+  queryInput[3] = req.body.returnDate;
+
+  console.log(queryInput);
+  const query =
+    `SELECT * FROM vehicle AS V JOIN rental AS R ON R.VehicleID = V.VehicleID 
+   WHERE V.Category = '${queryInput[2]};`;
+  client.query(query, (err, res) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(res);
+    client.end();
+  });
+  res.redirect('returnVehicle.html');
+});
+
+
 app.post("/addReservation", (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.type;
