@@ -94,18 +94,15 @@ app.post("/returnVehicle", async (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.custName;
   queryInput[1] = req.body.vehicleID;
-  queryInput[2] = req.body.vehicleDesc;
-  queryInput[3] = req.body.returnDate;
+  queryInput[2] = req.body.returnDate;
 
   const query = `
   SELECT Customer.name, SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
   FROM CUSTOMER JOIN RENTAL ON CUSTOMER.CustID = RENTAL.Custid JOIN VEHICLE ON VEHICLE.vehicleid = RENTAL.vehicleid
   WHERE CUSTOMER.custid = (SELECT custId FROM CUSTOMER WHERE name LIKE '%${queryInput[0]}%')
   AND VEHICLE.vehicleid = '${queryInput[1]}'
-  AND VEHICLE.description = '${queryInput[2]}'
-  AND RENTAL.returndate = '${queryInput[3]}'
-  AND RENTAL.paymentdate IS NULL
-  AND RENTAL.paymentdate = 'NULL'
+  AND RENTAL.returndate = '${queryInput[2]}'
+  AND (RENTAL.paymentdate = 'NULL' OR RENTAL.paymentdate IS NULL)
   GROUP BY customer.name;
   `;
 
@@ -115,7 +112,7 @@ app.post("/returnVehicle", async (req, res) => {
   WHERE vehicleid='${queryInput[1]}';
   `;
   data = await client.query(query);
-  client.query(updateQuery);
+  await client.query(updateQuery);
   amountDue.data = data.rows;
   if (amountDue.data.length == 0) {
     amountDue.data = [{ Name: 'No Payment Due' }];
