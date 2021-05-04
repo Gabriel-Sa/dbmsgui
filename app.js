@@ -93,29 +93,43 @@ app.post("/addReservation", async (req, res) => {
   res.redirect('/availableVehicles.html');
 });
 
-app.post("/returnVehicle", (req, res) => {
+//4. Process a Return
+var totalAmt = {
+  headers: ['Total Amount to be paid: '],
+  data: []
+}
+
+app.post("/returnVehicle", async(req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.custName;
   queryInput[1] = req.body.vehicleID;
   queryInput[2] = req.body.vehicleDesc;
   queryInput[3] = req.body.returnDate;
 
-  const query =
+  console.log(queryInput[0]);
+  console.log(queryInput[1]);
+  console.log(queryInput[2]);
+  console.log(queryInput[3]);
+  if (queryInput[0] != "" && queryInput[1] == "" && queryInput[2] != "" && queryInput[3] == "") {
+    const query =
     `SELECT SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
   FROM CUSTOMER JOIN RENTAL ON CUSTOMER.CustID = RENTAL.Custid JOIN VEHICLE ON VEHICLE.vehicleid = RENTAL.vehicleid
   WHERE CUSTOMER.custid = (SELECT custId FROM CUSTOMER WHERE name = '${queryInput[0]}')
   AND VEHICLE.vehicleid = '${queryInput[1]}'
   AND VEHICLE.description = '${queryInput[2]}'
-  AND RENTAL.returndate = '${queryInput[3]}';`;
+  AND RENTAL.returndate = '${queryInput[3]}');`;
 
-  client.query(query, (err, res) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-  });
-  res.redirect('returnVehicle.html');
+  const dataset = await client.query(query);
+  totalAmt.data = dataset.rows;
+
+  }
+  res.redirect('/totalAmount.html')
 });
+
+app.get("/totalAmount", (req, res) => {
+  res.send(totalAmt);
+});
+
 
 app.get("/getRentalData", (req, res) => {
   res.send(addRentalData);
