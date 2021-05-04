@@ -201,19 +201,19 @@ app.get("/getVehicles", (req, res) => {
 app.post("/searchCustomers", async (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.searchcustID;
-  queryInput[1] = req.body.searchcustName;
+  queryInput[1] = req.body.searchName;
   console.log(queryInput[0]);
   console.log(queryInput[1]);
   if (queryInput[0] != "" && queryInput[1] == "") {
     const query = `
-    SELECT C.CustID AS CustID, C.custName AS Customer,
+    SELECT C.CustID AS CustID, C.Name AS Customer,
     CAST((R.TOTAL_AMOUNT_DUE,2) AS MONEY)
     FROM Customer AS C, Rental AS R
     Where C.custID = '${queryInput[0]}'
     AND C.custID = R.custID GROUP BY CustID;
     `;
     const query1 = `
-    SELECT C.custID AS CustID, C.custName AS Customer,
+    SELECT C.custID AS CustID, C.Name AS Customer,
     CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
     WHERE R.vehicleid IS NULL AND C.id = '${queryInput[0]}%';
@@ -222,28 +222,28 @@ app.post("/searchCustomers", async (req, res) => {
     searchCResults.data = dataset.rows;
   } else if (queryInput[1] != "" && queryInput[0] == "") {
     const query = `
-    SELECT C.custID, C.custName, CAST((R.TOTAL_AMOUNT_DUE,2) AS money)
+    SELECT C.custID, C.Name, CAST((R.TOTAL_AMOUNT_DUE,2) AS money)
     FROM customer as c, rental as R
-    WHERE description LIKE '${queryInput[1]}%' AND r.custid = c.custid GROUP BY c.custid, c.custname;
+    WHERE description LIKE '${queryInput[1]}%' AND r.custid = c.custid GROUP BY c.custid, c.Name;
     `;
     const query1 = `
-    SELECT C.CustID AS custID, C.custName AS Customer,
+    SELECT C.CustID AS custID, C.Name AS Customer,
     CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
-    WHERE R.CustID IS NULL AND C.custName LIKE '${queryInput[1]}%';
+    WHERE R.CustID IS NULL AND C.Name LIKE '${queryInput[1]}%';
     `
     const dataSet = await client.query(query);
     const dataSet1 = await client.query(query1);
     searchCResults.data = dataSet.rows.concat(dataSet1.rows);
   } else {
     const query = `
-    SELECT C.CustID AS custID, C.custName as Customer,
+    SELECT C.CustID AS custID, C.Name as Customer,
     CASE WHEN R.TOTAL_AMOUNT_DUE IS NOT NULL THEN CAST((R.TOTAL_AMOUNT_DUE),2) AS money) END
     FROM rental AS R, customer AS C
     WHERE C.custID = R.custID GROUP BY custID, Customer, R.TOTAL_AMOUNT_DUE;
     `;
     const query1 = `
-    SELECT C.custID AS custID, C.custName AS Customer,
+    SELECT C.custID AS custID, C.Name AS Customer,
     CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
     WHERE R.custID IS NULL;
