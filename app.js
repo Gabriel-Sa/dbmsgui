@@ -162,6 +162,51 @@ app.get("/getVehicles", (req, res) => {
   res.send(searchVResults);
 });
 
+// Part 3
+app.post("/addRental", async (req, res) => {
+  var queryInput = new Array();
+  queryInput[0] = req.body.custID;
+  queryInput[1] = req.body.vehicleID;
+  queryInput[2] = req.body.orderDate;
+  queryInput[3] = req.body.startDate;
+  queryInput[4] = req.body.qty;
+  queryInput[5] = req.body.payNow;
+  queryInput[6] = req.body.rentalType;
+  if (queryInput[5] == 'Yes')
+  {
+    queryInput[5] = req.body.startDate;
+  }
+  else if (queryInput[5] == 'No')
+  {
+    queryInput[5] = 'NULL';
+  }
+
+  if (queryInput[6] == 'Weekly')
+  {
+    queryInput[6] = 7;
+  }
+  else if (queryInput[6] == 'Daily')
+  {
+    queryInput[6] = 1;
+  }
+  console.log(queryInput);
+  const query =
+    `INSERT INTO rental (CustID, VehicleID, StartDate, OrderDate, RentalType, Qty)
+    SELECT ${queryInput[0]}, '${queryInput[1]}', CAST('${queryInput[3]}' AS DATE),
+    CAST ('${queryInput[2]}' AS DATE), ${queryInput[6]}, ${queryInput[4]}`;
+    client.query(query, (err, res) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log(res);
+      client.end();
+      client.connect();
+    });
+    res.redirect('index.html');
+});
+// End of part 3
+
 
 app.listen(port, () => {
   console.log(`App started listening at http://localhost:${port}`);
