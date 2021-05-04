@@ -76,6 +76,7 @@ var addRentalData = {
   headers: [],
   data: []
 };
+
 app.post("/addReservation", async (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.type;
@@ -200,38 +201,36 @@ app.post("/addRental", async (req, res) => {
   queryInput[4] = req.body.qty;
   queryInput[5] = req.body.payNow;
   queryInput[6] = req.body.rentalType;
-  if (queryInput[5] == 'Yes')
-  {
+  if (queryInput[5] == 'Yes') {
     queryInput[5] = req.body.startDate;
   }
-  else if (queryInput[5] == 'No')
-  {
-    queryInput[5] = 'NULL';
+  else if (queryInput[5] == 'No') {
+    queryInput[5] = "NULL";
   }
 
-  if (queryInput[6] == 'Weekly')
-  {
+  if (queryInput[6] == 'Weekly') {
     queryInput[6] = 7;
   }
-  else if (queryInput[6] == 'Daily')
-  {
+  else if (queryInput[6] == 'Daily') {
     queryInput[6] = 1;
   }
   console.log(queryInput);
-  const query =
-    `INSERT INTO rental (CustID, VehicleID, StartDate, OrderDate, RentalType, Qty)
-    SELECT ${queryInput[0]}, '${queryInput[1]}', CAST('${queryInput[3]}' AS DATE),
-    CAST ('${queryInput[2]}' AS DATE), ${queryInput[6]}, ${queryInput[4]}`;
-    client.query(query, (err, res) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      console.log(res);
-      client.end();
-      client.connect();
-    });
-    res.redirect('index.html');
+  const query = `select type, category from vehicle where vehicleid='${queryInput[1]}';`
+  const data = await client.query(query);
+  var query1;
+  if (queryInput[6] == 1) {
+    query1 = `select daily as dRate from rate where type = ${data.rows[0].type} AND category = ${data.rows[0].category}`
+  } else {
+    query1 = `select weekly as dRate from rate where type = ${data.rows[0].type} AND category = ${data.rows[0].category}`
+  }
+  const data1 = await client.query(query1);
+  queryInput[7] = data1.rows[0].drate * queryInput[4];
+  const query2 = `INSERT INTO rental (CustID, VehicleID, StartDate, OrderDate, RentalType, Qty, totalamount, paymentdate)
+    VALUES(${queryInput[0]}, '${queryInput[1]}', CAST('${queryInput[3]}' AS DATE),
+    CAST ('${queryInput[2]}' AS DATE), ${queryInput[6]}, ${queryInput[4]}, ${queryInput[7]},
+    '${queryInput[5]}')`;
+  client.query(query2);
+  res.redirect('index.html');
 });
 // End of Part 3 Code
 
