@@ -205,7 +205,7 @@ app.get("/getVehicles", (req, res) => {
 app.post("/searchCustomers", async (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.searchcustID;
-  queryInput[1] = req.body.searchcustName;
+  queryInput[1] = req.body.searchName;
   console.log(queryInput[0]);
   console.log(queryInput[1]);
   if (queryInput[0] != "" && queryInput[1] == "") {
@@ -228,7 +228,7 @@ app.post("/searchCustomers", async (req, res) => {
     const query = `
     SELECT C.custID, C.Name, CAST(R.totalamount AS money)
     FROM customer as c, rental as R
-    WHERE description LIKE '${queryInput[1]}%' AND r.custid = c.custid GROUP BY c.custid, c.custname;
+    WHERE description LIKE '${queryInput[1]}%' AND r.custid = c.custid GROUP BY c.custid, c.Name;
     `;
     const query1 = `
     SELECT C.CustID AS custID, C.Name AS Customer,
