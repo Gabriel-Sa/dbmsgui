@@ -62,7 +62,7 @@ input{
 }
 
 .customerBackHolder{
-  position: fixed;
+  position: relative;
   padding-top: 5%;
 }
 
@@ -94,8 +94,9 @@ html, body{
 }
 
 .table-refresh{
-  min-width: 400px;
-  max-width: 1000px;
+  min-width: 50%;
+  max-width: 70%;
+  padding-left: 15%;
   font-size: 14px;
 }
 
