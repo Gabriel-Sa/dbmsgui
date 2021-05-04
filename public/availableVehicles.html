@@ -7,8 +7,39 @@
   </head>
   <body>
     <div class="table-refresh" data-url="/getRentalData">
-
+      <!-- <table class="table-refresh__table">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+      </table> -->
     </div>
   </body>
+  <form action="/addRental" method="POST">
+    <lable for="custID">Customer ID: (example 200)</lable>
+    <input type="text" class="userInput" id="custID" name="custID"><br><br>
+    <lable for="vehicleID">Vehicle ID to Rent:</lable>
+    <input type="text" class="userInput" id="vehicleID" name="vehicleID"><br><br>
+    <lable for="orderDate">Order Date: (example 5/5/5555)</lable>
+    <input type="text" class="userInput" id="orderDate" name="orderDate"><br><br>
+    <lable for="startDate">Start Date: (example 5/5/5555)</lable>
+    <input type="text" class="userInput" id="startDate" name="startDate"><br><br>
+    <lable for="qty">How many weeks/days to rent? (example: 5)</lable>
+    <input type="text" class="userInput" id="qty" name="qty"><br><br>
+    <lable for="payNow">Pay Now? (Yes/No)</lable>
+    <input type="text" class="userInput" id="payNow" name="payNow"><br><br>
+    <lable for="rentalType">Weekly or Daily? (Weekly/Daily)</lable>
+    <input type="text" class="userInput" id="rentalType" name="rentalType"><br><br>
+    <button type="submit" id="submitUser">Submit</button>
+  </form>
 <script src="index.js"></script>
 </html>
