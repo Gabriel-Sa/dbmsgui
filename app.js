@@ -38,13 +38,7 @@ app.post("/addCustomer", (req, res) => {
   queryInput[1] = req.body.custPhone;
   const query = `INSERT INTO customer(name, phone) values
    ('${queryInput[0]}', '${queryInput[1]}');`
-  client.query(query, (err, res) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    client.end();
-  });
+  client.query(query);
   res.redirect('/');
 });
 
@@ -62,13 +56,7 @@ app.post("/addVehicle", (req, res) => {
           ${queryInput[2]},
           ${queryInput[3]},
           ${queryInput[4]});`;
-  client.query(query, (err, res) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    client.end();
-  });
+  client.query(query);
   res.redirect('addVehicle.html');
 });
 
