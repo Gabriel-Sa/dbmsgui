@@ -207,14 +207,14 @@ app.post("/searchCustomers", async (req, res) => {
   if (queryInput[0] != "" && queryInput[1] == "") {
     const query = `
     SELECT C.CustID AS CustID, C.custName AS Customer,
-    CAST(ROUND(AVG(R.totalAmount/(R.qty*R.rentaltype)),2) AS MONEY) AS Daily
+    CAST((R.TOTAL_AMOUNT_DUE,2) AS MONEY)
     FROM Customer AS C, Rental AS R
     Where C.custID = '${queryInput[0]}'
     AND C.custID = R.custID GROUP BY CustID;
     `;
     const query1 = `
     SELECT C.custID AS CustID, C.custName AS Customer,
-    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
     WHERE R.vehicleid IS NULL AND C.id = '${queryInput[0]}%';
     `
@@ -222,13 +222,13 @@ app.post("/searchCustomers", async (req, res) => {
     searchCResults.data = dataset.rows;
   } else if (queryInput[1] != "" && queryInput[0] == "") {
     const query = `
-    SELECT C.custID, C.custName, CAST(ROUND(AVG(R.totalamount/(R.qty*R.rentaltype)),2) AS money) AS Daily
+    SELECT C.custID, C.custName, CAST((R.TOTAL_AMOUNT_DUE,2) AS money)
     FROM customer as c, rental as R
     WHERE description LIKE '${queryInput[1]}%' AND r.custid = c.custid GROUP BY c.custid, c.custname;
     `;
     const query1 = `
     SELECT C.CustID AS custID, C.custName AS Customer,
-    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
     WHERE R.CustID IS NULL AND C.custName LIKE '${queryInput[1]}%';
     `
@@ -238,13 +238,13 @@ app.post("/searchCustomers", async (req, res) => {
   } else {
     const query = `
     SELECT C.CustID AS custID, C.custName as Customer,
-    CASE WHEN R.totalamount IS NOT NULL THEN CAST(ROUND(AVG(R.totalamount/(R.qty*R.rentaltype)),2) AS money) END AS Daily
+    CASE WHEN R.TOTAL_AMOUNT_DUE IS NOT NULL THEN CAST((R.TOTAL_AMOUNT_DUE),2) AS money) END
     FROM rental AS R, customer AS C
-    WHERE C.custID = R.custID GROUP BY custID, Customer, R.totalamount ORDER BY Daily;
+    WHERE C.custID = R.custID GROUP BY custID, Customer, R.TOTAL_AMOUNT_DUE;
     `;
     const query1 = `
     SELECT C.custID AS custID, C.custName AS Customer,
-    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
     WHERE R.custID IS NULL;
     `
