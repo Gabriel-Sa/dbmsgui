@@ -14,15 +14,6 @@ const client = new Client({
   port: 5432
 });
 
-// => {
-//   if (err) {
-//     console.error(err);
-//     return;
-//   }
-//   console.log('CREATE TABLE');
-//   client.end();
-// });
-
 client.connect();
 
 function completeUserInput(query) {
@@ -109,7 +100,6 @@ app.post("/returnVehicle", (req, res) => {
   queryInput[2] = req.body.vehicleDesc;
   queryInput[3] = req.body.returnDate;
 
-  console.log(queryInput);
   const query =
     `SELECT SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
   FROM CUSTOMER JOIN RENTAL ON CUSTOMER.CustID = RENTAL.Custid JOIN VEHICLE ON VEHICLE.vehicleid = RENTAL.vehicleid
@@ -123,8 +113,6 @@ app.post("/returnVehicle", (req, res) => {
       console.error(err);
       return;
     }
-    console.log("Output,", res.rows);
-    console.log("RowCount:", res.rowCount);
   });
   res.redirect('returnVehicle.html');
 });
@@ -165,7 +153,6 @@ app.post("/addRental", async (req, res) => {
   else if (queryInput[6] == 'Daily') {
     queryInput[6] = 1;
   }
-  console.log(queryInput);
   const query = `select type, category from vehicle where vehicleid='${queryInput[1]}';`
   const data = await client.query(query);
   var query1;
@@ -189,37 +176,36 @@ app.post("/addRental", async (req, res) => {
 //5a
 app.post("/searchCustomers", async (req, res) => {
   var queryInput = new Array();
-  queryInput[0] = req.body.searchcustID;
-  queryInput[1] = req.body.searchName;
-  console.log(queryInput[0]);
-  console.log(queryInput[1]);
-  if (queryInput[0] != "" && queryInput[1] == "") {
+  queryInput[0] = req.body.searchInput;
+  queryInput[1] = req.body.searchBy;
+  if (queryInput[1] == 1) {
     const query = `
     SELECT C.CustID AS CustID, C.name AS Customer,
-    CAST(R.totalamount AS MONEY)
+    CASE
+      WHEN R.totalamount > 0 THEN CAST(R.totalamount AS MONEY)
+      WHEN R.totalamount IS NULL THEN '$0.00'
+    END AS tamount
     FROM Customer AS C, Rental AS R
     Where C.custID = ${queryInput[0]}
     AND C.custID = R.custID GROUP BY C.CustID, C.name, R.totalamount;
     `;
-    const query1 = `
-    SELECT C.custID AS CustID, C.Name AS Customer,
-    CASE WHEN R.totalamount IS NULL THEN '$0.00' END
-    FROM Customer AS C NATURAL LEFT JOIN Rental as R
-    WHERE R.vehicleid IS NULL AND C.custID = ${queryInput[0]};
-    `
     const dataset = await client.query(query);
     searchCResults.data = dataset.rows;
-  } else if (queryInput[1] != "" && queryInput[0] == "") {
+  } else if (queryInput[1] == 2) {
     const query = `
-    SELECT C.custID, C.Name, CAST(R.totalamount AS money)
+    SELECT C.custID, C.Name,
+    CASE
+      WHEN R.totalamount > 0 THEN CAST(R.totalamount AS MONEY)
+      WHEN R.totalamount IS NULL THEN '$0.00'
+    END AS tamount
     FROM customer as c, rental as R
-    WHERE description LIKE '${queryInput[1]}%' AND r.custid = c.custid GROUP BY c.custid, c.Name;
+    WHERE C.Name LIKE '%${queryInput[0]}%' AND r.custid = c.custid GROUP BY c.custid, c.Name, R.totalamount;
     `;
     const query1 = `
     SELECT C.CustID AS custID, C.Name AS Customer,
     CASE WHEN R.totalamount IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
-    WHERE R.CustID IS NULL AND C.name LIKE '${queryInput[1]}%';
+    WHERE R.CustID IS NULL AND C.name LIKE '%${queryInput[0]}%';
     `
     const dataSet = await client.query(query);
     const dataSet1 = await client.query(query1);
@@ -227,15 +213,18 @@ app.post("/searchCustomers", async (req, res) => {
   } else {
     const query = `
     SELECT C.CustID AS custID, C.name as Customer,
-    CASE WHEN R.totalamount IS NOT NULL THEN CAST(R.totalamount AS money) END
+    CASE
+      WHEN R.totalamount > 0 THEN CAST(R.totalamount AS money)
+      WHEN r.totalamount IS NULL THEN '$0.00'
+    END AS totalamt
     FROM rental AS R, customer AS C
-    WHERE C.custID = R.custID GROUP BY custID, Customer, R.totalamount;
+    WHERE C.custID = R.custID GROUP BY C.custID, C.name, R.totalamount ORDER BY C.custid, r.totalamount;
     `;
     const query1 = `
     SELECT C.custID AS custID, C.Name AS Customer,
     CASE WHEN R.totalamount IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
-    WHERE R.custID IS NULL;
+    WHERE R.custID IS NULL ORDER BY C.custid, r.totalamount;
     `
     const dataSet = await client.query(query);
     const dataSet1 = await client.query(query1);
@@ -253,8 +242,6 @@ app.post("/searchVehicles", async (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.searchVIN;
   queryInput[1] = req.body.searchDescription;
-  console.log(queryInput[0]);
-  console.log(queryInput[1]);
   if (queryInput[0] != "" && queryInput[1] == "") {
     const query = `
     SELECT V.VehicleId AS VIN, V.Description AS Vehicle,
@@ -267,7 +254,7 @@ app.post("/searchVehicles", async (req, res) => {
     SELECT V.VehicleID AS VIN, V.description AS Vehicle,
     CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
     FROM Vehicle AS V NATURAL LEFT JOIN Rental as R
-    WHERE R.vehicleid IS NULL AND V.id = '${queryInput[0]}%';
+    WHERE R.vehicleid IS NULL AND V.id = '%${queryInput[0]}%';
     `
     const dataset = await client.query(query);
     searchVResults.data = dataset.rows;

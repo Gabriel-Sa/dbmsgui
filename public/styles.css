@@ -48,6 +48,12 @@ input{
   box-shadow: none !important;
 }
 
+#sHolder{
+  display: inline-flex ;
+  padding-left: 85%;
+}
+
+
 #submitVehicle{
   background-color: #90AFC5;
   color: white;
