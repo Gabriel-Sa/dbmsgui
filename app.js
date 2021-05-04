@@ -250,7 +250,7 @@ app.post("/searchCustomers", async (req, res) => {
     `
     const dataSet = await client.query(query);
     const dataSet1 = await client.query(query1);
-    searchVResults.data = dataSet.rows.concat(dataSet1.rows);
+    searchCResults.data = dataSet.rows.concat(dataSet1.rows);
   }
   res.redirect('/scResults.html')
 });
