@@ -12,6 +12,12 @@
     <form action="/searchCustomer" method="POST">
       <lable for="searchCustomer">Search:</lable>
       <input type="text" class="userInput" id="searchCustomer" name="searchCustomer"><br><br>
+      <lable for="searchBy">Search By:</lable>
+      <select id="searchBy" name="searchBy">
+          <option value="1">Customer ID</option>
+          <option value="2">Customer Name</option>
+          <option value="3">None</option>
+      </select>
       <button type="submit" id="submitUser">Submit</button>
     </form>
     <div class="customerBackHolder">
@@ -20,3 +26,4 @@
 
   </body>
 </html>
+
