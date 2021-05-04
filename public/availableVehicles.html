@@ -35,10 +35,18 @@
     <input type="text" class="userInput" id="startDate" name="startDate"><br><br>
     <lable for="qty">How many weeks/days to rent? (example: 5)</lable>
     <input type="text" class="userInput" id="qty" name="qty"><br><br>
+    <div id="selectHolder">
     <lable for="payNow">Pay Now? (Yes/No)</lable>
-    <input type="text" class="userInput" id="payNow" name="payNow"><br><br>
-    <lable for="rentalType">Weekly or Daily? (Weekly/Daily)</lable>
-    <input type="text" class="userInput" id="rentalType" name="rentalType"><br><br>
+    <select id="payNow" name="payNow">
+        <option value="0">Yes</option>
+        <option value="1">No</option>
+    </select>
+    <lable for="rentalType">Days or Weeks?</lable>
+    <select id="rentalType" name="rentalType">
+        <option value="0">Days</option>
+        <option value="1">Weeks</option>
+    </select>
+  </div>
     <button type="submit" id="submitUser">Submit</button>
   </form>
 <script src="index.js"></script>

@@ -137,17 +137,17 @@ app.post("/addRental", async (req, res) => {
   queryInput[4] = req.body.qty;
   queryInput[5] = req.body.payNow;
   queryInput[6] = req.body.rentalType;
-  if (queryInput[5] == 'Yes') {
-    queryInput[5] = req.body.startDate;
+  if (queryInput[5] == 0) {
+    queryInput[5] = req.body.orderDate;
   }
-  else if (queryInput[5] == 'No') {
+  else if (queryInput[5] == 1) {
     queryInput[5] = "NULL";
   }
 
-  if (queryInput[6] == 'Weekly') {
+  if (queryInput[6] == 1) {
     queryInput[6] = 7;
   }
-  else if (queryInput[6] == 'Daily') {
+  else if (queryInput[6] == 0) {
     queryInput[6] = 1;
   }
   const query = `select type, category from vehicle where vehicleid='${queryInput[1]}';`

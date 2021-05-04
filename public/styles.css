@@ -84,6 +84,15 @@ select{
   width: 27%;
 }
 
+#selectHolder{
+  display: block;
+  padding-bottom: 2%;
+}
+
+#selectHolder select{
+  width:100%;
+}
+
 .buttonHolder{
   padding-top: 5%;
   display: grid;
