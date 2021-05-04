@@ -6,10 +6,10 @@ const { Client } = require('pg');
 //start connection with postgresql
 
 const client = new Client({
-  user: 'postgres', // Change username here
+  user: 'root', // Change username here
   host: 'localhost',
-  database: 'Car_Rental',
-  password: 'haha', //change password here
+  database: 'project',
+  password: 'root1234', //change password here
   port: 5432
 });
 
@@ -136,6 +136,10 @@ var searchVResults = {
   headers: ['VIN', 'Vehicle', 'Avg Daily Price'],
   data: []
 }
+var searchCResults = {
+  headers: ['Customer ID', 'Name', 'Remaining Balance'],
+  data: []
+}
 
 app.post("/searchVehicles", async (req, res) => {
   var queryInput = new Array();
@@ -206,45 +210,45 @@ app.post("/searchCustomers", async (req, res) => {
   console.log(queryInput[1]);
   if (queryInput[0] != "" && queryInput[1] == "") {
     const query = `
-    SELECT C.CustID AS CustID, C.custName AS Customer,
-    CAST((R.TOTAL_AMOUNT_DUE,2) AS MONEY)
+    SELECT C.CustID AS CustID, C.name AS Customer,
+    CAST(R.totalamount AS MONEY)
     FROM Customer AS C, Rental AS R
-    Where C.custID = '${queryInput[0]}'
-    AND C.custID = R.custID GROUP BY CustID;
+    Where C.custID = ${queryInput[0]}
+    AND C.custID = R.custID GROUP BY C.CustID, C.name, R.totalamount;
     `;
     const query1 = `
-    SELECT C.custID AS CustID, C.custName AS Customer,
-    CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
+    SELECT C.custID AS CustID, C.Name AS Customer,
+    CASE WHEN R.totalamount IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
-    WHERE R.vehicleid IS NULL AND C.id = '${queryInput[0]}%';
+    WHERE R.vehicleid IS NULL AND C.custID = ${queryInput[0]};
     `
     const dataset = await client.query(query);
     searchCResults.data = dataset.rows;
   } else if (queryInput[1] != "" && queryInput[0] == "") {
     const query = `
-    SELECT C.custID, C.custName, CAST((R.TOTAL_AMOUNT_DUE,2) AS money)
+    SELECT C.custID, C.Name, CAST(R.totalamount AS money)
     FROM customer as c, rental as R
     WHERE description LIKE '${queryInput[1]}%' AND r.custid = c.custid GROUP BY c.custid, c.custname;
     `;
     const query1 = `
-    SELECT C.CustID AS custID, C.custName AS Customer,
-    CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
+    SELECT C.CustID AS custID, C.Name AS Customer,
+    CASE WHEN R.totalamount IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
-    WHERE R.CustID IS NULL AND C.custName LIKE '${queryInput[1]}%';
+    WHERE R.CustID IS NULL AND C.name LIKE '${queryInput[1]}%';
     `
     const dataSet = await client.query(query);
     const dataSet1 = await client.query(query1);
     searchCResults.data = dataSet.rows.concat(dataSet1.rows);
   } else {
     const query = `
-    SELECT C.CustID AS custID, C.custName as Customer,
-    CASE WHEN R.TOTAL_AMOUNT_DUE IS NOT NULL THEN CAST((R.TOTAL_AMOUNT_DUE),2) AS money) END
+    SELECT C.CustID AS custID, C.name as Customer,
+    CASE WHEN R.totalamount IS NOT NULL THEN CAST(R.totalamount AS money) END
     FROM rental AS R, customer AS C
-    WHERE C.custID = R.custID GROUP BY custID, Customer, R.TOTAL_AMOUNT_DUE;
+    WHERE C.custID = R.custID GROUP BY custID, Customer, R.totalamount;
     `;
     const query1 = `
-    SELECT C.custID AS custID, C.custName AS Customer,
-    CASE WHEN R.TOTAL_AMOUNT_DUE IS NULL THEN '$0.00' END
+    SELECT C.custID AS custID, C.Name AS Customer,
+    CASE WHEN R.totalamount IS NULL THEN '$0.00' END
     FROM Customer AS C NATURAL LEFT JOIN Rental as R
     WHERE R.custID IS NULL;
     `
@@ -258,28 +262,6 @@ app.post("/searchCustomers", async (req, res) => {
 app.get("/getCustomers", (req, res) => {
   res.send(searchCResults);
 });
-
-//app.post("/searchCustomer", (req, res) => {
-  //var queryInput = new Array();
-  //queryInput[0] = req.body.custID;
-  //queryInput[1] = req.body.custName;
-
-  //console.log(queryInput);
-  //const query =
-  //'SELECT C.CustID, C.custName, R.RentalBalance FROM Customer AS C AND RENTAL AS R WHERE ';
-  //client.query(quey,(err,res) => {
-    //if(err) {
-      //console.error(err);
-    //  return;
-    //}
-    //console.log("Output,", res.rows);
-  //});
-  //res.redirect('/');
-//});
-//app.get("/getCustomers", (req, res) => {
-  //res.send(searchCResults);
-//});
-
 
 app.listen(port, () => {
   console.log(`App started listening at http://localhost:${port}`);
