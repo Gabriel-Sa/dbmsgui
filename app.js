@@ -96,6 +96,8 @@ app.post("/returnVehicle", async (req, res) => {
   queryInput[1] = req.body.vehicleID;
   queryInput[2] = req.body.returnDate;
 
+  console.log(queryInput);
+
   const query = `
   SELECT Customer.name, SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
   FROM CUSTOMER JOIN RENTAL ON CUSTOMER.CustID = RENTAL.Custid JOIN VEHICLE ON VEHICLE.vehicleid = RENTAL.vehicleid
