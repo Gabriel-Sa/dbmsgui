@@ -9,18 +9,33 @@ const client = new Client({
   user: 'postgres', // Change username here
   host: 'localhost',
   database: 'Car_Rental',
-  password: 'test1234', //change password here
+  password: 'haha', //change password here
   port: 5432
 });
 
+// => {
+//   if (err) {
+//     console.error(err);
+//     return;
+//   }
+//   console.log('CREATE TABLE');
+//   client.end();
+// });
+
 client.connect();
+
+function completeUserInput(query) {
+  const inputQuery = query;
+  // Implement adding of the customer data to the user database based off input.
+  return inputQuery;
+}
 
 const app = express();
 const port = 8000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyparser.urlencoded({ extended: false }));
-//app.use(express.urlencoded());
+
 
 const eRouter = express.Router();
 app.use("/", eRouter);
@@ -29,7 +44,6 @@ app.post("/addCustomer", (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.custName;
   queryInput[1] = req.body.custPhone;
-  console.log(queryInput);
   const query = `INSERT INTO customer(name, phone) values
    ('${queryInput[0]}', '${queryInput[1]}');`
   client.query(query, (err, res) => {
@@ -37,7 +51,6 @@ app.post("/addCustomer", (req, res) => {
       console.error(err);
       return;
     }
-    console.log(res);
     client.end();
   });
   res.redirect('/');
@@ -50,7 +63,6 @@ app.post("/addVehicle", (req, res) => {
   queryInput[2] = req.body.year;
   queryInput[3] = req.body.type;
   queryInput[4] = req.body.category;
-  console.log(queryInput);
   const query =
     `INSERT INTO vehicle
     VALUES('${queryInput[0]}',
@@ -63,44 +75,47 @@ app.post("/addVehicle", (req, res) => {
       console.error(err);
       return;
     }
-    console.log(res);
     client.end();
   });
   res.redirect('addVehicle.html');
 });
 
+var addRentalData = {
+  headers: [],
+  data: []
+};
+app.post("/addReservation", async (req, res) => {
+  var queryInput = new Array();
+  queryInput[0] = req.body.type;
+  queryInput[1] = req.body.category;
+  const query =
+    `SELECT V.VehicleID as VIN, V.Description AS Vehicle, V.Year
+   FROM vehicle AS V LEFT JOIN rental AS R ON R.VehicleID = V.VehicleID
+   WHERE V.Category = '${queryInput[1]}' AND V.Type = '${queryInput[0]}' AND R.VehicleID IS NULL;`;
+  const data = await client.query(query);
+  for (var i = 0; i < 3; i++) {
+    addRentalData.headers[i] = data.fields[i].name;
+  }
+  addRentalData.data = data.rows;
+  res.redirect('/availableVehicles.html');
+});
+
 app.post("/returnVehicle", (req, res) => {
   var queryInput = new Array();
-  queryInput[0] = req.body.custID;
+  queryInput[0] = req.body.custName;
   queryInput[1] = req.body.vehicleID;
   queryInput[2] = req.body.vehicleDesc;
   queryInput[3] = req.body.returnDate;
 
   console.log(queryInput);
   const query =
-    `SELECT * FROM vehicle AS V JOIN rental AS R ON R.VehicleID = V.VehicleID 
-   WHERE V.Category = '${queryInput[2]};`;
-  client.query(query, (err, res) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(res);
-    client.end();
-  });
-  res.redirect('returnVehicle.html');
-});
+    `SELECT SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
+  FROM CUSTOMER JOIN RENTAL ON CUSTOMER.CustID = RENTAL.Custid JOIN VEHICLE ON VEHICLE.vehicleid = RENTAL.vehicleid
+  WHERE CUSTOMER.custid = (SELECT custId FROM CUSTOMER WHERE name = '${queryInput[0]}')
+  AND VEHICLE.vehicleid = '${queryInput[1]}'
+  AND VEHICLE.description = '${queryInput[2]}'
+  AND RENTAL.returndate = '${queryInput[3]}';`;
 
-
-app.post("/addReservation", (req, res) => {
-  var queryInput = new Array();
-  queryInput[0] = req.body.type;
-  queryInput[1] = req.body.category;
-  console.log(queryInput);
-  const query =
-  `SELECT V.VehicleID as VIN, V.Description, V.Year 
-   FROM vehicle AS V LEFT JOIN rental AS R ON R.VehicleID = V.VehicleID 
-   WHERE V.Category = '${queryInput[1]}' AND V.Type = '${queryInput[0]}' AND R.VehicleID IS NULL;`;
   client.query(query, (err, res) => {
     if (err) {
       console.error(err);
@@ -108,11 +123,162 @@ app.post("/addReservation", (req, res) => {
     }
     console.log("Output,", res.rows);
     console.log("RowCount:", res.rowCount);
-    //client.end();
   });
-  res.redirect('availableVehicles.html');
-  //res.render('tempdisplay', {data: res.rows});
+  res.redirect('returnVehicle.html');
 });
+
+
+app.get("/getRentalData", (req, res) => {
+  res.send(addRentalData);
+});
+
+var searchVResults = {
+  headers: ['VIN', 'Vehicle', 'Avg Daily Price'],
+  data: []
+}
+
+app.post("/searchVehicles", async (req, res) => {
+  var queryInput = new Array();
+  queryInput[0] = req.body.searchVIN;
+  queryInput[1] = req.body.searchDescription;
+  console.log(queryInput[0]);
+  console.log(queryInput[1]);
+  if (queryInput[0] != "" && queryInput[1] == "") {
+    const query = `
+    SELECT V.VehicleId AS VIN, V.Description AS Vehicle,
+    CAST(ROUND(AVG(R.totalAmount/(R.qty*R.rentaltype)),2) AS MONEY) AS Daily
+    FROM Vehicle AS V, Rental AS R
+    Where V.VehicleId = '${queryInput[0]}'
+    AND V.VehicleID = R.VehicleID GROUP BY VIN, Vehicle ORDER BY Daily;
+    `;
+    const query1 = `
+    SELECT V.VehicleID AS VIN, V.description AS Vehicle,
+    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    FROM Vehicle AS V NATURAL LEFT JOIN Rental as R
+    WHERE R.vehicleid IS NULL AND V.id = '${queryInput[0]}%';
+    `
+    const dataset = await client.query(query);
+    searchVResults.data = dataset.rows;
+  } else if (queryInput[1] != "" && queryInput[0] == "") {
+    const query = `
+    SELECT V.VehicleId, V.Description, CAST(ROUND(AVG(R.totalamount/(R.qty*R.rentaltype)),2) AS money) AS Daily
+    FROM vehicle as v, rental as R
+    WHERE description LIKE '${queryInput[1]}%' AND r.vehicleid = v.vehicleid GROUP BY v.vehicleid, v.description ORDER BY daily;
+    `;
+    const query1 = `
+    SELECT V.VehicleID AS VIN, V.description AS Vehicle,
+    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    FROM Vehicle AS V NATURAL LEFT JOIN Rental as R
+    WHERE R.vehicleid IS NULL AND V.description LIKE '${queryInput[1]}%';
+    `
+    const dataSet = await client.query(query);
+    const dataSet1 = await client.query(query1);
+    searchVResults.data = dataSet.rows.concat(dataSet1.rows);
+  } else {
+    const query = `
+    SELECT V.VehicleId AS VIN, V.description as Vehicle,
+    CASE WHEN R.totalamount IS NOT NULL THEN CAST(ROUND(AVG(R.totalamount/(R.qty*R.rentaltype)),2) AS money) END AS Daily
+    FROM rental AS R, vehicle AS V
+    WHERE V.vehicleId = R.vehicleid GROUP BY VIN, Vehicle, R.totalamount ORDER BY Daily;
+    `;
+    const query1 = `
+    SELECT V.VehicleID AS VIN, V.description AS Vehicle,
+    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    FROM Vehicle AS V NATURAL LEFT JOIN Rental as R
+    WHERE R.vehicleid IS NULL;
+    `
+    const dataSet = await client.query(query);
+    const dataSet1 = await client.query(query1);
+    searchVResults.data = dataSet.rows.concat(dataSet1.rows);
+  }
+  res.redirect('/svResults.html')
+});
+
+app.get("/getVehicles", (req, res) => {
+  res.send(searchVResults);
+});
+
+app.post("/searchCustomers", async (req, res) => {
+  var queryInput = new Array();
+  queryInput[0] = req.body.searchcustID;
+  queryInput[1] = req.body.searchcustName;
+  console.log(queryInput[0]);
+  console.log(queryInput[1]);
+  if (queryInput[0] != "" && queryInput[1] == "") {
+    const query = `
+    SELECT C.CustID AS CustID, C.custName AS Customer,
+    CAST(ROUND(AVG(R.totalAmount/(R.qty*R.rentaltype)),2) AS MONEY) AS Daily
+    FROM Customer AS C, Rental AS R
+    Where C.custID = '${queryInput[0]}'
+    AND C.custID = R.custID GROUP BY CustID;
+    `;
+    const query1 = `
+    SELECT C.custID AS CustID, C.custName AS Customer,
+    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    FROM Customer AS C NATURAL LEFT JOIN Rental as R
+    WHERE R.vehicleid IS NULL AND C.id = '${queryInput[0]}%';
+    `
+    const dataset = await client.query(query);
+    searchCResults.data = dataset.rows;
+  } else if (queryInput[1] != "" && queryInput[0] == "") {
+    const query = `
+    SELECT C.custID, C.custName, CAST(ROUND(AVG(R.totalamount/(R.qty*R.rentaltype)),2) AS money) AS Daily
+    FROM customer as c, rental as R
+    WHERE description LIKE '${queryInput[1]}%' AND r.custid = c.custid GROUP BY c.custid, c.custname;
+    `;
+    const query1 = `
+    SELECT C.CustID AS custID, C.custName AS Customer,
+    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    FROM Customer AS C NATURAL LEFT JOIN Rental as R
+    WHERE R.CustID IS NULL AND C.custName LIKE '${queryInput[1]}%';
+    `
+    const dataSet = await client.query(query);
+    const dataSet1 = await client.query(query1);
+    searchCResults.data = dataSet.rows.concat(dataSet1.rows);
+  } else {
+    const query = `
+    SELECT C.CustID AS custID, C.custName as Customer,
+    CASE WHEN R.totalamount IS NOT NULL THEN CAST(ROUND(AVG(R.totalamount/(R.qty*R.rentaltype)),2) AS money) END AS Daily
+    FROM rental AS R, customer AS C
+    WHERE C.custID = R.custID GROUP BY custID, Customer, R.totalamount ORDER BY Daily;
+    `;
+    const query1 = `
+    SELECT C.custID AS custID, C.custName AS Customer,
+    CASE WHEN R.totalamount IS NULL THEN 'Not-applicable' END AS Daily
+    FROM Customer AS C NATURAL LEFT JOIN Rental as R
+    WHERE R.custID IS NULL;
+    `
+    const dataSet = await client.query(query);
+    const dataSet1 = await client.query(query1);
+    searchVResults.data = dataSet.rows.concat(dataSet1.rows);
+  }
+  res.redirect('/scResults.html')
+});
+
+app.get("/getCustomers", (req, res) => {
+  res.send(searchCResults);
+});
+
+//app.post("/searchCustomer", (req, res) => {
+  //var queryInput = new Array();
+  //queryInput[0] = req.body.custID;
+  //queryInput[1] = req.body.custName;
+
+  //console.log(queryInput);
+  //const query =
+  //'SELECT C.CustID, C.custName, R.RentalBalance FROM Customer AS C AND RENTAL AS R WHERE ';
+  //client.query(quey,(err,res) => {
+    //if(err) {
+      //console.error(err);
+    //  return;
+    //}
+    //console.log("Output,", res.rows);
+  //});
+  //res.redirect('/');
+//});
+//app.get("/getCustomers", (req, res) => {
+  //res.send(searchCResults);
+//});
 
 
 app.listen(port, () => {

@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <script type="module"></script>
+    <title>Search</title>
+  </head>
+  <body>
+    <script src="index.js"></script>
+    <h1> Search Customers</h1>
+    <form action="/searchCustomers" method="POST">
+      <lable for="searchCustID">Customer ID</lable>
+      <input type="text" class="userInput" id="searchCustID" name="searchCustID"><br><br>
+      <lable for="searchcustName">or Customer Name</lable>
+      <input type="text" class="userInput" id="searchcustName" name="searchcustName"><br><br>
+      <button type="submit" id="submitUser">Submit</button>
+    </form>
+    <div class="customerBackHolder">
+        <button class="buttons" id="customerBack" onclick = "Homepage()">Back</button>
+    </div>
+  </body>
+</html>
