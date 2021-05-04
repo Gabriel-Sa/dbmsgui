@@ -103,9 +103,9 @@ app.post("/returnVehicle", (req, res) => {
   const query =
     `SELECT SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
   FROM CUSTOMER JOIN RENTAL ON CUSTOMER.CustID = RENTAL.Custid JOIN VEHICLE ON VEHICLE.vehicleid = RENTAL.vehicleid
-  WHERE CUSTOMER.custid = (SELECT custId FROM CUSTOMER WHERE name = '${queryInput[0]}') 
-  AND VEHICLE.vehicleid = '${queryInput[1]}' 
-  AND VEHICLE.description = '${queryInput[2]}' 
+  WHERE CUSTOMER.custid = (SELECT custId FROM CUSTOMER WHERE name = '${queryInput[0]}')
+  AND VEHICLE.vehicleid = '${queryInput[1]}'
+  AND VEHICLE.description = '${queryInput[2]}'
   AND RENTAL.returndate = '${queryInput[3]}';`;
 
   client.query(query, (err, res) => {
