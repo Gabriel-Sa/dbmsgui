@@ -6,10 +6,10 @@ const { Client } = require('pg');
 //start connection with postgresql
 
 const client = new Client({
-  user: 'postgres', // Change username here
+  user: 'root', // Change username here
   host: 'localhost',
-  database: 'Car_Rental',
-  password: 'haha', //change password here
+  database: 'project',
+  password: 'root1234', //change password here
   port: 5432
 });
 
