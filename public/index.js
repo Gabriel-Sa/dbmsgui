@@ -19,6 +19,9 @@ function searchVehicle() {
 function Homepage() {
   window.location.replace("index.html");
 }
+function paidRental() {
+  window.location.replace("successfullyPaid.html");
+}
 
 {
   async function updateTable(root) {

@@ -9,18 +9,16 @@
   <body>
     <script src="index.js"></script>
     <h1> Search Customers</h1>
-    <form action="/searchCustomers" method="POST">
-      <lable for="searchInput">Search:</lable>
-      <input type="text" class="userInput" id="searchInput" name="searchInput"><br><br>
+    <form action="/searchCustomer" method="POST">
+      <lable for="searchCustomer">Search:</lable>
+      <input type="text" class="userInput" id="searchCustomer" name="searchCustomer"><br><br>
       <lable for="searchBy">Search By:</lable>
       <select id="searchBy" name="searchBy">
           <option value="1">Customer ID</option>
           <option value="2">Customer Name</option>
           <option value="3">None</option>
       </select>
-      <div class="sumbitholder" id="sHolder">
       <button type="submit" id="submitUser">Submit</button>
-      </div>
     </form>
     <div class="customerBackHolder">
         <button class="buttons" id="customerBack" onclick = "Homepage()">Back</button>
