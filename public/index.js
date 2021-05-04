@@ -19,6 +19,9 @@ function searchVehicle() {
 function Homepage() {
   window.location.replace("index.html");
 }
+function loadPage() {
+  window.location.replace("sPaid.html");
+}
 
 {
   async function updateTable(root) {

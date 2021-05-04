@@ -72,6 +72,14 @@ input{
   padding-top: 5%;
 }
 
+#paymentPage{
+  padding-left: 40%;
+}
+
+.inputHolder{
+  padding-top: 10%;
+}
+
 select{
   width: 27%;
 }

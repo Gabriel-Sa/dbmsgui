@@ -9,22 +9,19 @@
   <body>
     <script src="index.js"></script>
     <h1>Return Vehicle</h1>
-    <!-- <textarea class="searchbar"></textarea> -->
-        <form action="/returnVehicle" method="POST">
-      <lable for="custID">Customer ID:</lable>
-      <input type="text" class="userInput" id="custID" name="custID"><br><br>
+    <form action="/returnVehicle" method="POST">
+      <lable for="custName">Customer Name:</lable>
+      <input type="text" class="userInput" id="custName" name="custName"><br><br>
       <lable for="vehicleID">Vehicle ID:</lable>
       <input type="text" class="userInput" id="vehicleID" name="vehicleID"><br><br>
       <lable for="vehicleDesc">Vehicle Description:</lable>
       <input type="text" class="userInput" id="vehicleDesc" name="vehicleDesc"><br><br>
       <lable for="returnDate">Return Date:</lable>
       <input type="text" class="userInput" id="returnDate" name="returnDate"><br><br>
-
-      <button type="submit" id="submitUser">Submit</button>
+      <button type="submit" class="submitButtons" id="submitUser">Submit</button>
     </form>
     <div class="customerBackHolder">
       <button class="buttons" id="customerBack" onclick = "Homepage()">Back</button>
     </div>
   </body>
 </html>
-

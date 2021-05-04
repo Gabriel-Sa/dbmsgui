@@ -81,42 +81,51 @@ app.post("/addReservation", async (req, res) => {
   res.redirect('/availableVehicles.html');
 });
 
-app.post("/returnVehicle", (req, res) => {
+app.get("/getRentalData", (req, res) => {
+  res.send(addRentalData);
+});
+
+var amountDue = {
+  headers: ['Name', 'Total Amount Due'],
+  data: []
+}
+
+app.post("/returnVehicle", async (req, res) => {
   var queryInput = new Array();
   queryInput[0] = req.body.custName;
   queryInput[1] = req.body.vehicleID;
   queryInput[2] = req.body.vehicleDesc;
   queryInput[3] = req.body.returnDate;
 
-  const query =
-    `SELECT SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
+  const query = `
+  SELECT Customer.name, SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
   FROM CUSTOMER JOIN RENTAL ON CUSTOMER.CustID = RENTAL.Custid JOIN VEHICLE ON VEHICLE.vehicleid = RENTAL.vehicleid
-  WHERE CUSTOMER.custid = (SELECT custId FROM CUSTOMER WHERE name = '${queryInput[0]}')
+  WHERE CUSTOMER.custid = (SELECT custId FROM CUSTOMER WHERE name LIKE '%${queryInput[0]}%')
   AND VEHICLE.vehicleid = '${queryInput[1]}'
   AND VEHICLE.description = '${queryInput[2]}'
-  AND RENTAL.returndate = '${queryInput[3]}';`;
+  AND RENTAL.returndate = '${queryInput[3]}'
+  AND RENTAL.paymentdate IS NULL
+  AND RENTAL.paymentdate = 'NULL'
+  GROUP BY customer.name;
+  `;
 
-  client.query(query, (err, res) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-  });
-  res.redirect('returnVehicle.html');
+  const updateQuery = `
+  UPDATE rental
+  SET paymentdate = CAST(CURRENT_DATE AS character(20))
+  WHERE vehicleid='${queryInput[1]}';
+  `;
+  data = await client.query(query);
+  client.query(updateQuery);
+  amountDue.data = data.rows;
+  if (amountDue.data.length == 0) {
+    amountDue.data = [{ Name: 'No Payment Due' }];
+  }
+  res.redirect('return.html');
 });
 
-app.get("/getRentalData", (req, res) => {
-  res.send(addRentalData);
+app.get("/getAmountDue", (req, res) => {
+  res.send(amountDue);
 });
-
-var searchVResults = {
-  headers: ['VIN', 'Vehicle', 'Avg Daily Price'],
-  data: []
-}
-var searchCResults = {
-  headers: ['Customer ID', 'Name', 'Remaining Balance'],
-  data: []
-}
 
 // Part 3 Code
 app.post("/addRental", async (req, res) => {
@@ -160,6 +169,15 @@ app.post("/addRental", async (req, res) => {
 });
 // End of Part 3 Code
 
+// 5
+var searchVResults = {
+  headers: ['VIN', 'Vehicle', 'Avg Daily Price'],
+  data: []
+}
+var searchCResults = {
+  headers: ['Customer ID', 'Name', 'Remaining Balance'],
+  data: []
+}
 
 //5a
 app.post("/searchCustomers", async (req, res) => {
