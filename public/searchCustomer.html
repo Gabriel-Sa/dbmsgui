@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -9,20 +10,15 @@
   <body>
     <script src="index.js"></script>
     <h1> Search Customers</h1>
-    <form action="/searchCustomer" method="POST">
-      <lable for="searchCustomer">Search:</lable>
-      <input type="text" class="userInput" id="searchCustomer" name="searchCustomer"><br><br>
-      <lable for="searchBy">Search By:</lable>
-      <select id="searchBy" name="searchBy">
-          <option value="1">Customer ID</option>
-          <option value="2">Customer Name</option>
-          <option value="3">None</option>
-      </select>
+    <form action="/searchCustomers" method="POST">
+      <lable for="searchCustID">Customer ID</lable>
+      <input type="text" class="userInput" id="searchCustID" name="searchCustID"><br><br>
+      <lable for="searchcustName">or Customer Name</lable>
+      <input type="text" class="userInput" id="searchcustName" name="searchcustName"><br><br>
       <button type="submit" id="submitUser">Submit</button>
     </form>
     <div class="customerBackHolder">
         <button class="buttons" id="customerBack" onclick = "Homepage()">Back</button>
     </div>
-
   </body>
 </html>
