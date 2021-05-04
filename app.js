@@ -92,6 +92,34 @@ app.post("/addReservation", async (req, res) => {
   res.redirect('/availableVehicles.html');
 });
 
+app.post("/returnVehicle", (req, res) => {
+  var queryInput = new Array();
+  queryInput[0] = req.body.custName;
+  queryInput[1] = req.body.vehicleID;
+  queryInput[2] = req.body.vehicleDesc;
+  queryInput[3] = req.body.returnDate;
+
+  console.log(queryInput);
+  const query =
+    `SELECT SUM(TotalAmount)AS TOTAL_AMOUNT_DUE
+  FROM CUSTOMER JOIN RENTAL ON CUSTOMER.CustID = RENTAL.Custid JOIN VEHICLE ON VEHICLE.vehicleid = RENTAL.vehicleid
+  WHERE CUSTOMER.custid = (SELECT custId FROM CUSTOMER WHERE name = '${queryInput[0]}') 
+  AND VEHICLE.vehicleid = '${queryInput[1]}' 
+  AND VEHICLE.description = '${queryInput[2]}' 
+  AND RENTAL.returndate = '${queryInput[3]}';`;
+
+  client.query(query, (err, res) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log("Output,", res.rows);
+    console.log("RowCount:", res.rowCount);
+  });
+  res.redirect('returnVehicle.html');
+});
+
+
 app.get("/getRentalData", (req, res) => {
   res.send(addRentalData);
 });
